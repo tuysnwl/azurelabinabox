@@ -1,0 +1,456 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+		"LabName": {
+			"defaultValue": "azurelab",
+			"type": "String"
+		},
+		"ManagementIP": {
+			"defaultValue": "162.204.129.102",
+			"type": "String"
+		},
+		"NSvVersion": {
+		    "type": "string",
+		    "allowedValues": [
+				"Gen6",
+				"Gen7"
+			],
+			"defaultValue": "Gen7"
+		},
+		"SSHUserName": {
+			"defaultValue": "snwladmin",
+			"type": "String"
+		},
+		"SSHPassword": {
+			"type": "securestring",
+			"metadata": {
+				"description": "The password for the above SSH user. Password must contain one non alpha-numeric character, one uppercase alpha-numeric character and one numeric character"
+			}
+		}
+    },
+    "variables": {
+
+		
+		"resourceGroupName": "[resourceGroup().name]",
+		"vnetName": "[concat(parameters('LabName'),'VNET')]",
+		"routeTableName": "[concat(parameters('LabName'),'RouteTable')]",
+		"storageAccountName": "[concat(parameters('LabName'),'storage')]",
+
+		"NSvImagePublisher": "sonicwall-inc",
+		"NSvImageOffer": "sonicwall-nsz-azure",
+		"NSvImageSku": "snwl-nsv-byol",
+		"NSvVmSize": "Standard_D3_v2",
+		"NSvNetworkSecurityGroups": "NSvNSG",
+		"NSvX1PublicIPAddresses": "NSvX1PubIP",
+		"NSvNetworkInterfaces": "NSvNic",
+		"NSvX1NetworkInterfaces": "NSvNic-X1",
+		"NSvX0NetworkInterfaces": "NSvNic-X0",
+		"NSvImageVersionNumberPrefix": "[if(equals(indexOf('987', '.'), -1), '0.0.', '')]",
+		"NSvImageVersionNumber": "[concat(variables('NSvImageVersionNumberPrefix'), '987')]",
+		"NSvImageVersion": "[if(equals(parameters('NSvVersion'), 'Gen7'), 'latest', variables('NSvImageVersionNumber'))]",
+
+
+		"NSvVmTemplateUrl": "https://catalogartifact.azureedge.net/publicartifacts/sonicwall-inc.sonicwall-nsv-firewall-security-vpn-router-1a995416-a603-4bf8-a52d-4c1914119f19-snwl-nsv-byol-sltn/Artifacts/virtual-machine-password.json",
+		"variablesEnd": ""
+	},
+    "resources": [
+        {
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2020-11-01",
+            "name": "[variables('NSvNetworkSecurityGroups')]",
+		    "location": "[resourceGroup().Location]",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "Allow-HTTPS-management-from-IP",
+                        "properties": {
+                            "description": "Allow management from CIDR",
+                            "protocol": "TCP",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "443",
+                            "sourceAddressPrefix": "[parameters('ManagementIP')]",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 100,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "Allow-SSH-management-from-IP",
+                        "properties": {
+                            "description": "Allow management from CIDR",
+                            "protocol": "TCP",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "22",
+                            "sourceAddressPrefix": "[parameters('ManagementIP')]",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 101,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "Allow-HTTP-management-from-IP",
+                        "properties": {
+                            "description": "Allow management from CIDR",
+                            "protocol": "TCP",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "80",
+                            "sourceAddressPrefix": "[parameters('ManagementIP')]",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 102,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "Allow-AzureLoadBalancer",
+                        "properties": {
+                            "description": "Allow AzureLoadBalancer",
+                            "protocol": "TCP",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "168.63.129.16",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 103,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "Deny-HTTPS-management",
+                        "properties": {
+                            "description": "Deny HTTPS",
+                            "protocol": "TCP",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "443",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Deny",
+                            "priority": 200,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "Deny-SSH-management",
+                        "properties": {
+                            "description": "Deny SSH",
+                            "protocol": "TCP",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "22",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Deny",
+                            "priority": 201,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "Deny-HTTP-management",
+                        "properties": {
+                            "description": "Deny HTTP",
+                            "protocol": "TCP",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "80",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Deny",
+                            "priority": 202,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "Default-Allow",
+                        "properties": {
+                            "description": "Allow all other traffic so firewall can do its job",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 300,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Network/routeTables",
+            "apiVersion": "2020-11-01",
+            "name": "[variables('routeTableName')]",
+            "location": "[resourceGroup().Location]",
+            "properties": {
+                "disableBgpRoutePropagation": false,
+                "routes": [
+                    {
+                        "name": "LAN-DefaultRoute",
+                        "properties": {
+                            "addressPrefix": "0.0.0.0/0",
+                            "nextHopType": "VirtualAppliance",
+                            "nextHopIpAddress": "10.3.2.4",
+                            "hasBgpOverride": false
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks",
+            "apiVersion": "2020-11-01",
+            "name": "[variables('vnetName')]",
+            "location": "[resourceGroup().Location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('NSvNetworkSecurityGroups'))]",
+                "[resourceId('Microsoft.Network/routeTables', variables('routeTableName'))]"
+            ],
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "10.3.0.0/16"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "WAN",
+                        "properties": {
+                            "addressPrefix": "10.3.1.0/24",
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('NSvNetworkSecurityGroups'))]"
+                            },
+                            "delegations": [],
+                            "privateEndpointNetworkPolicies": "Enabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled"
+                        }
+                    },
+                    {
+                        "name": "LAN",
+                        "properties": {
+                            "addressPrefix": "10.3.2.0/24",
+                            "routeTable": {
+                                "id": "[resourceId('Microsoft.Network/routeTables', variables('routeTableName'))]"
+                            },
+                            "delegations": [],
+                            "privateEndpointNetworkPolicies": "Enabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled"
+                        }
+                    }
+                ],
+                "virtualNetworkPeerings": [],
+                "enableDdosProtection": false
+            }
+        },
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2020-11-01",
+            "name": "[variables('NSvX1PublicIPAddresses')]",
+            "location": "[resourceGroup().Location]",
+            "sku": {
+                "name": "Basic",
+                "tier": "Regional"
+            },
+            "properties": {
+                "publicIPAddressVersion": "IPv4",
+                "publicIPAllocationMethod": "Dynamic",
+                "idleTimeoutInMinutes": 4,
+                "dnsSettings": {
+                    "domainNameLabel": "[concat(parameters('LabName'),'nsvvm')]"
+                },
+                "ipTags": []
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2021-01-01",
+            "name": "[variables('storageAccountName')]",
+            "location": "[resourceGroup().Location]",
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "kind": "Storage",
+            "properties": {
+                "networkAcls": {
+                    "bypass": "AzureServices",
+                    "virtualNetworkRules": [],
+                    "ipRules": [],
+                    "defaultAction": "Allow"
+                },
+                "supportsHttpsTrafficOnly": false,
+                "encryption": {
+                    "services": {
+                        "file": {
+                            "keyType": "Account",
+                            "enabled": true
+                        },
+                        "blob": {
+                            "keyType": "Account",
+                            "enabled": true
+                        }
+                    },
+                    "keySource": "Microsoft.Storage"
+                }
+            }
+        },		
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2020-11-01",
+            "name": "[variables('NSvX0NetworkInterfaces')]",
+            "location": "[resourceGroup().Location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]"
+            ],
+            "tags": {
+                "displayName": "NSv-X0"
+            },
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig2",
+                        "properties": {
+                            "privateIPAddress": "10.3.2.4",
+                            "privateIPAllocationMethod": "Dynamic",
+                            "subnet": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), 'LAN')]"
+                            },
+                            "primary": true,
+                            "privateIPAddressVersion": "IPv4"
+                        }
+                    }
+                ],
+                "dnsSettings": {
+                    "dnsServers": []
+                },
+                "enableAcceleratedNetworking": false,
+                "enableIPForwarding": true
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2020-11-01",
+            "name": "[variables('NSvX1NetworkInterfaces')]",
+            "location": "[resourceGroup().Location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', variables('NSvX1PublicIPAddresses'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]"
+            ],
+            "tags": {
+                "displayName": "NSv-X1"
+            },
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAddress": "10.3.1.4",
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('NSvX1PublicIPAddresses'))]"
+                            },
+                            "subnet": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), 'WAN')]"
+                            },
+                            "primary": true,
+                            "privateIPAddressVersion": "IPv4"
+                        }
+                    }
+                ],
+                "dnsSettings": {
+                    "dnsServers": []
+                },
+                "enableAcceleratedNetworking": false,
+                "enableIPForwarding": true
+            }
+        },
+
+		{
+		    "name": "NSv-VM",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-05-01",
+			"dependsOn": [
+				"[variables('storageAccountName')]",
+				"[concat('Microsoft.Network/networkInterfaces/', variables('NSvX1NetworkInterfaces'))]",
+				"[concat('Microsoft.Network/networkInterfaces/', variables('NSvX0NetworkInterfaces'))]"
+			],
+			"properties": {
+				"mode": "Incremental",
+				"templateLink": {
+				"uri": "[variables('NSvVmTemplateUrl')]",
+				"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"location": {
+					"value": "[resourceGroup().Location]"
+				},
+				"vmName": {
+					"value": "NSv-VM"
+				},
+				"imageSku": {
+					"value": "[variables('NSvImageSku')]"
+				},
+				"imageOffer": {
+					"value": "[variables('NSvImageOffer')]"
+				},
+				"imagePublisher": {
+					"value": "[variables('NSvImagePublisher')]"
+				},
+				"nicName": {
+					"value": "[variables('NSvNetworkInterfaces')]"
+				},
+				"vmSize": {
+					"value": "[variables('NSvVmSize')]"
+				},
+				"SSHUserName": {
+					"value": "[parameters('SSHUserName')]"
+				},
+				"SSHPassword": {
+					"value": "[parameters('SSHPassword')]"
+				},
+				"storageAccount": {
+					"value": "[variables('storageAccountName')]"
+				},
+				"storageAccountResourceGroupName": {
+					"value": "[variables('resourceGroupName')]"
+				},
+				"sshKey": {
+					"value": ""
+				}
+			}
+		  }
+		}
+	]
+}
