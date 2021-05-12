@@ -426,7 +426,7 @@
 				"imagePublisher": {
 					"value": "[variables('NSvImagePublisher')]"
 				},
-                "generation": {
+                "imageVersion": {
 					"value": "[parameters('NSvVersion')]"
 				},
 				"nicName": {
