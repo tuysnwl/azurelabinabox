@@ -15,43 +15,6 @@
           "description": "Password for the Virtual Machine."
         }
       },
-      "dnsLabelPrefix": {
-        "type": "string",
-        "defaultValue": "[toLower(concat(parameters('vmName'),'-', uniqueString(resourceGroup().id, parameters('vmName'))))]",
-        "metadata": {
-          "description": "Unique DNS Name for the Public IP used to access the Virtual Machine."
-        }
-      },
-      "publicIpName": {
-        "type": "string",
-        "defaultValue": "myPublicIP",
-        "metadata": {
-          "description": "Name for the Public IP used to access the Virtual Machine."
-        }
-      },
-      "publicIPAllocationMethod": {
-        "type": "string",
-        "defaultValue": "Dynamic",
-        "allowedValues": [
-          "Dynamic",
-          "Static"
-        ],
-        "metadata": {
-          "description": "Allocation method for the Public IP used to access the Virtual Machine."
-        }
-      },
-      "publicIpSku": {
-        "type": "string",
-        "defaultValue": "Basic",
-        "allowedValues": [
-          "Basic",
-          "Standard"
-        ],
-        "metadata": {
-          "description": "SKU for the Public IP used to access the Virtual Machine."
-        }
-      },
-  
       "OSVersion": {
         "type": "string",
         "defaultValue": "2019-Datacenter",
@@ -95,17 +58,23 @@
         "metadata": {
           "description": "Name of the virtual machine."
         }
+      },
+      "storageAccountName": {
+        "type":"string",
+        "defaultValue": "storageaccount"
+      },
+      "virtualNetworkName": {
+        "type": "string",
+        "defaultValue": "vnet"
+      },
+      "subnetName": {
+        "type": "string",
+        "defaultValue": "LAN"
+      },
+      "nicName": {
+        "type": "string",
+        "defaultValue": "windowsNic"
       }
-    },
-    "variables": {
-      "storageAccountName": "[concat('bootdiags', uniquestring(resourceGroup().id))]",
-      "nicName": "myVMNic",
-      "addressPrefix": "10.0.0.0/16",
-      "subnetName": "Subnet",
-      "subnetPrefix": "10.0.0.0/24",
-      "virtualNetworkName": "MyVNET",
-      "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetName'))]",
-      "networkSecurityGroupName": "default-NSG"
     },
     "resources": [
       {
@@ -114,8 +83,8 @@
         "name": "[parameters('vmName')]",
         "location": "[parameters('location')]",
         "dependsOn": [
-          "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
-          "[resourceId('Microsoft.Network/networkInterfaces', variables('nicName'))]"
+          "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]",
+          "[resourceId('Microsoft.Network/networkInterfaces', parameters('nicName'))]"
         ],
         "properties": {
           "hardwareProfile": {
@@ -150,7 +119,7 @@
           "networkProfile": {
             "networkInterfaces": [
               {
-                "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('nicName'))]"
+                "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('nicName'))]"
               }
             ]
           },

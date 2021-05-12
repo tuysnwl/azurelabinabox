@@ -45,6 +45,8 @@
 		"NSvX0NetworkInterfaces": "NSvNic-X0",
         "NSvVmTemplateUrl": "https://raw.githubusercontent.com/tuysnwl/azurelabinabox/main/vmTemplates/nsvTemplate.json",
 
+        "WinOSVersion": "2019-Datacenter",
+        "WinVMSize": "Standard_B1s",
         "WinNetworkSecurityGroups": "WinNSG",
         "WinPublicIP": "WinPubIP",
         "WinPublicIpSku": "Basic",
@@ -396,7 +398,6 @@
                 "enableIPForwarding": true
             }
         },
-
 		{
 		    "name": "NSv-VM",
 			"type": "Microsoft.Resources/deployments",
@@ -409,113 +410,162 @@
 			"properties": {
 				"mode": "Incremental",
 				"templateLink": {
-				"uri": "[variables('NSvVmTemplateUrl')]",
-				"contentVersion": "1.0.0.0"
+				    "uri": "[variables('NSvVmTemplateUrl')]",
+				    "contentVersion": "1.0.0.0"
 				},
 				"parameters": {
 					"location": {
-					"value": "[resourceGroup().Location]"
-				},
-				"vmName": {
-					"value": "NSv-VM"
-				},
-				"imageSku": {
-					"value": "[variables('NSvImageSku')]"
-				},
-				"imageOffer": {
-					"value": "[variables('NSvImageOffer')]"
-				},
-				"imagePublisher": {
-					"value": "[variables('NSvImagePublisher')]"
-				},
-                "imageVersion": {
-					"value": "[parameters('NSvVersion')]"
-				},
-				"nicName": {
-					"value": "[variables('NSvNetworkInterfaces')]"
-				},
-				"vmSize": {
-					"value": "[variables('NSvVmSize')]"
-				},
-				"SSHUserName": {
-					"value": "[parameters('SSHUserName')]"
-				},
-				"SSHPassword": {
-					"value": "[parameters('SSHPassword')]"
-				},
-				"storageAccount": {
-					"value": "[variables('storageAccountName')]"
-				},
-
-				"sshKey": {
-					"value": ""
-				}
+					    "value": "[resourceGroup().Location]"
+				    },
+				    "vmName": {
+					    "value": "NSv-VM"
+				    },
+				    "imageSku": {
+					    "value": "[variables('NSvImageSku')]"
+				    },
+				    "imageOffer": {
+					    "value": "[variables('NSvImageOffer')]"
+				    },
+				    "imagePublisher": {
+					    "value": "[variables('NSvImagePublisher')]"
+				    },
+                    "imageVersion": {
+					    "value": "[parameters('NSvVersion')]"
+				    },
+				    "nicName": {
+					    "value": "[variables('NSvNetworkInterfaces')]"
+				    },
+				    "vmSize": {
+					    "value": "[variables('NSvVmSize')]"
+				    },
+				    "SSHUserName": {
+					    "value": "[parameters('SSHUserName')]"
+				    },
+				    "SSHPassword": {
+					    "value": "[parameters('SSHPassword')]"
+				    },
+				    "storageAccount": {
+					    "value": "[variables('storageAccountName')]"
+				    },
+				    "sshKey": {
+					    "value": ""
+				    }
+                }
 			}
-		}
-	},
-    {
-        "type": "Microsoft.Network/networkSecurityGroups",
-        "apiVersion": "2020-06-01",
-        "name": "[variables('WinNetworkSecurityGroups')]",
-        "location": "[resourceGroup().Location]",
-        "properties": {
-            "securityRules": [
+		},
+        {
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2020-06-01",
+            "name": "[variables('WinNetworkSecurityGroups')]",
+            "location": "[resourceGroup().Location]",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "default-allow-3389",
+                        "properties": {
+                            "priority": 1000,
+                            "access": "Allow",
+                            "direction": "Inbound",
+                            "destinationPortRange": "3389",
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "sourceAddressPrefix": "[parameters('ManagementIP')]",
+                            "destinationAddressPrefix": "*"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2020-06-01",
+            "name": "[variables('WinPublicIP')]",
+            "location": "[resourceGroup().Location]",
+            "sku": {
+                "name": "[variables('WinPublicIpSku')]"
+            },
+            "properties": {
+            "publicIPAllocationMethod": "[variables('WinPublicIPAllocationMethod')]",
+            "dnsSettings": {
+                "domainNameLabel": "[variables('WinDnsLabelPrefix')]"
+            }
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2020-06-01",
+            "name": "[variables('WinNetworkInterfaces')]",
+            "location": "[resourceGroup().Location]",
+            "dependsOn": [
+            "[resourceId('Microsoft.Network/publicIPAddresses', variables('WinPublicIP'))]",
+            "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]"
+            ],
+            "properties": {
+            "ipConfigurations": [
                 {
-                    "name": "default-allow-3389",
-                    "properties": {
-                        "priority": 1000,
-                        "access": "Allow",
-                        "direction": "Inbound",
-                        "destinationPortRange": "3389",
-                        "protocol": "Tcp",
-                        "sourcePortRange": "*",
-                        "sourceAddressPrefix": "[parameters('ManagementIP')]",
-                        "destinationAddressPrefix": "*"
+                "name": "ipconfig3",
+                "properties": {
+                    "privateIPAllocationMethod": "Dynamic",
+                    "privateIPAddress": "10.3.1.5",
+                    "publicIPAddress": {
+                        "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('WinPublicIP'))]"
+                    },
+                    "subnet": {
+                        "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), 'LAN')]"
                     }
                 }
-            ]
-        }
-    },
-    {
-        "type": "Microsoft.Network/publicIPAddresses",
-        "apiVersion": "2020-06-01",
-        "name": "[variables('WinPublicIP')]",
-        "location": "[resourceGroup().Location]",
-        "sku": {
-            "name": "[variables('WinPublicIpSku')]"
-        },
-        "properties": {
-          "publicIPAllocationMethod": "[variables('WinPublicIPAllocationMethod')]",
-          "dnsSettings": {
-            "domainNameLabel": "[variables('WinDnsLabelPrefix')]"
-          }
-        }
-    },
-    {
-        "type": "Microsoft.Network/networkInterfaces",
-        "apiVersion": "2020-06-01",
-        "name": "[variables('WinNetworkInterfaces')]",
-        "location": "[resourceGroup().Location]",
-        "dependsOn": [
-          "[resourceId('Microsoft.Network/publicIPAddresses', variables('WinPublicIP'))]",
-          "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]"
-        ],
-        "properties": {
-          "ipConfigurations": [
-            {
-              "name": "ipconfig3",
-              "properties": {
-                "privateIPAllocationMethod": "Dynamic",
-                "privateIPAddress": "10.3.1.5",
-                "publicIPAddress": {
-                    "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('WinPublicIP'))]"
-                },
-                "subnet": {
-                    "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), 'LAN')]"
                 }
-              }
+            ]
             }
-          ]
-        }
-    }]
+        },
+        {
+		    "name": "Win-VM",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-05-01",
+			"dependsOn": [
+				"[variables('storageAccountName')]",
+				"[concat('Microsoft.Network/networkInterfaces/', variables('NSvX1NetworkInterfaces'))]",
+				"[concat('Microsoft.Network/networkInterfaces/', variables('NSvX0NetworkInterfaces'))]"
+			],
+			"properties": {
+				"mode": "Incremental",
+				"templateLink": {
+				    "uri": "[variables('WinVmTemplateUrl')]",
+				    "contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"location": {
+					    "value": "[resourceGroup().Location]"
+				    },
+				    "vmName": {
+					    "value": "NSv-VM"
+				    },
+				    "adminUsername": {
+					    "value": "[parameters('SSHUserName')]"
+				    },
+                    "adminPassword": {
+					    "value": "[parameters('SSHPassword')]"
+				    },
+                    "OSVersion": {
+					    "value": "[variables('WinOSVersion')]"
+				    },
+                    "vmSize": {
+					    "value": "[variables('WinVMSize')]"
+				    },
+                    "storageAccountName": {
+					    "value": "[variables('storageAccountName')]"
+				    },
+                    "virtualNetworkName": {
+					    "value": "[variables('vnetName')]"
+				    },
+                    "subnetName": {
+					    "value": "LAN"
+				    },
+                    "nicName": {
+					    "value": "[variables('WinNetworkInterfaces')]"
+				    }
+                }
+			}
+		}    
+    ]
 }
