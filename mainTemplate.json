@@ -11,12 +11,12 @@
 		},
 		"NSvVersion": {
 		    "type": "string",
-		    "allowedValues": [
+            "allowedValues": [
 				"Gen6",
 				"Gen7"
 			],
 			"defaultValue": "Gen7"
-		},
+        },
 		"SSHUserName": {
 			"defaultValue": "snwladmin",
 			"type": "String"
@@ -45,6 +45,7 @@
 		"NSvNetworkInterfaces": "NSvNic",
 		"NSvX1NetworkInterfaces": "NSvNic-X1",
 		"NSvX0NetworkInterfaces": "NSvNic-X0",
+
 
 
 		"NSvVmTemplateUrlOld": "https://catalogartifact.azureedge.net/publicartifacts/sonicwall-inc.sonicwall-nsv-firewall-security-vpn-router-1a995416-a603-4bf8-a52d-4c1914119f19-snwl-nsv-byol-sltn/Artifacts/virtual-machine-password.json",

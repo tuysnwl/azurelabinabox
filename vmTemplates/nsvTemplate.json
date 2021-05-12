@@ -2,100 +2,98 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "location": {
-            "type": "string"
-        },
-        "vmName": {
-            "type": "string"
-        },
-        "imageSku": {
-            "type": "string"
-        },
-        "generation": {
-            "type": "string",		    
-                "allowedValues": [
-				"Gen6",
-				"Gen7"
-			],
-			"defaultValue": "Gen7"
-        },
-        "imageOffer": {
-            "type": "string"
-        },
-        "imagePublisher": {
-            "type": "string"
-        },
-        "nicName": {
-            "type": "string"
-        },
-        "vmSize": {
-            "type": "string"
-        },
-        "SSHUserName": {
-            "type": "string"
-        },
-        "SSHPassword": {
-            "type": "securestring"
-        },
-        "storageAccount": {
-            "type": "string"
-        },
-        "sshKey": {
-            "type": "string"
+      "location": {
+        "type": "string"
+      },
+      "vmName": {
+        "type": "string"
+      },
+      "imageSku": {
+        "type": "string"
+      },
+      "imageVersion": {
+        "type": "string",
+        "metadata": {
+            "description": "Gen6 or Gen7"
         }
+      },
+      "imageOffer": {
+        "type": "string"
+      },
+      "imagePublisher": {
+        "type": "string"
+      },
+      "nicName": {
+        "type": "string"
+      },
+      "vmSize": {
+        "type": "string"
+      },
+      "SSHUserName": {
+        "type": "string"
+      },
+      "SSHPassword": {
+        "type": "securestring"
+      },
+      "storageAccount": {
+        "type": "string"
+      },
+      "sshKey": {
+        "type": "string"
+      }
     },
     "variables": {
-		"NSvImageVersionNumberPrefix": "[if(equals(indexOf('987', '.'), -1), '0.0.', '')]",
-		"NSvImageVersionNumber": "[concat(variables('NSvImageVersionNumberPrefix'), '987')]",
-		"NSvImageVersion": "[if(equals(parameters('generation'), 'Gen6'), variables('NSvImageVersionNumber'), 'latest')]"
+        "NSvImageVersionNumberPrefix": "[if(equals(indexOf('987', '.'), -1), '0.0.', '')]",
+        "NSvImageVersionNumber": "[concat(variables('NSvImageVersionNumberPrefix'), '987')]",
+        "NSvImageVersion": "[if(equals(parameters('imageVersion'), 'Gen7'),  'latest', variables('NSvImageVersionNumber'))]"
+        
     },
     "resources": [
     {
-        "apiVersion": "2018-04-01",
-        "type": "Microsoft.Compute/virtualMachines",
-        "name": "[parameters('vmName')]",
-        "location": "[parameters('location')]",
-        "plan": {
-            "name": "[parameters('imageSku')]",
-            "product": "[parameters('imageOffer')]",
-            "publisher": "[parameters('imagePublisher')]"
-        },
-        "properties": {
-            "hardwareProfile": {
-                "vmSize": "[parameters('vmSize')]"
-            },
-            "osProfile": {
-                "computerName": "[parameters('vmName')]",
-                "adminUserName": "[parameters('SSHUserName')]",
-                "adminPassword": "[parameters('SSHPassword')]"
-            },
-            "storageProfile": {
-                "imageReference": {
-                    "publisher": "[parameters('imagePublisher')]",
-                    "offer": "[parameters('imageOffer')]",
-                    "sku": "[parameters('imageSku')]",
-                    "version": "[variables('NSvImageVersion')]"
-                },
-                "osDisk": {
-                    "caching": "ReadWrite",
-                    "createOption": "FromImage"
-                }
-            },
-            "networkProfile": {
-                "networkInterfaces": [
-                    {
-                        "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('nicName'),'-X1'))]",
-                        "properties": {
-                            "primary": true
-                        }
-                    }, {
-                        "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('nicName'),'-X0'))]",
-                        "properties": {
-                            "primary": false
-                        }
-                    }
-                ]
-            }
-        }
-    }]
-}
+          "apiVersion": "2018-04-01",
+          "type": "Microsoft.Compute/virtualMachines",
+          "name": "[parameters('vmName')]",
+          "location": "[parameters('location')]",
+          "plan": {
+             "name": "[parameters('imageSku')]",
+             "product": "[parameters('imageOffer')]",
+             "publisher": "[parameters('imagePublisher')]"
+          },
+          "properties": {
+              "hardwareProfile": {
+                  "vmSize": "[parameters('vmSize')]"
+              },
+              "osProfile": {
+                  "computerName": "[parameters('vmName')]",
+                  "adminUserName": "[parameters('SSHUserName')]",
+                  "adminPassword": "[parameters('SSHPassword')]"
+              },
+              "storageProfile": {
+                  "imageReference": {
+                      "publisher": "[parameters('imagePublisher')]",
+                      "offer": "[parameters('imageOffer')]",
+                      "sku": "[parameters('imageSku')]",
+                      "version": "[variables('NSvImageVersion')]"
+                  },
+                  "osDisk": {
+                      "caching": "ReadWrite",
+                      "createOption": "FromImage"
+                  }
+              },
+              "networkProfile": {
+                  "networkInterfaces": [
+                  {
+                      "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('nicName'),'-X1'))]",
+                      "properties": {
+                          "primary": true
+                      }
+                  }, {
+                      "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('nicName'),'-X0'))]",
+                      "properties": {
+                          "primary": false
+                      }
+                  }]
+              }
+          }
+      }]
+  }
