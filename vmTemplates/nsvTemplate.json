@@ -12,7 +12,12 @@
             "type": "string"
         },
         "generation": {
-            "type": "string"
+            "type": "string",		    
+                "allowedValues": [
+				"Gen6",
+				"Gen7"
+			],
+			"defaultValue": "Gen7"
         },
         "imageOffer": {
             "type": "string"
@@ -42,7 +47,7 @@
     "variables": {
 		"NSvImageVersionNumberPrefix": "[if(equals(indexOf('987', '.'), -1), '0.0.', '')]",
 		"NSvImageVersionNumber": "[concat(variables('NSvImageVersionNumberPrefix'), '987')]",
-		"NSvImageVersion": "[if(equals(parameters('generation'), '7'), 'latest', variables('NSvImageVersionNumber'))]"
+		"NSvImageVersion": "[if(equals(parameters('generation'), 'Gen6'), variables('NSvImageVersionNumber'), 'latest')]"
     },
     "resources": [
     {
