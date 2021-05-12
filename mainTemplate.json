@@ -506,7 +506,7 @@
                 "name": "ipconfig3",
                 "properties": {
                     "privateIPAllocationMethod": "Dynamic",
-                    "privateIPAddress": "10.3.1.5",
+                    "privateIPAddress": "10.3.2.5",
                     "publicIPAddress": {
                         "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('WinPublicIP'))]"
                     },
