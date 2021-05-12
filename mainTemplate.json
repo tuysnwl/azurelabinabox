@@ -7,7 +7,6 @@
 			"type": "String"
 		},
 		"ManagementIP": {
-			"defaultValue": "162.204.129.102",
 			"type": "String"
 		},
 		"NSvVersion": {
@@ -428,6 +427,9 @@
 				"imagePublisher": {
 					"value": "[variables('NSvImagePublisher')]"
 				},
+                "imageVersion": {
+					"value": "[variables('NSvImageVersion')]"
+				},
 				"nicName": {
 					"value": "[variables('NSvNetworkInterfaces')]"
 				},
@@ -446,6 +448,7 @@
 				"storageAccountResourceGroupName": {
 					"value": "[variables('resourceGroupName')]"
 				},
+
 				"sshKey": {
 					"value": ""
 				}
