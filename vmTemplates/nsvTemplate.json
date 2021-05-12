@@ -11,7 +11,7 @@
         "imageSku": {
             "type": "string"
         },
-        "imageVersion": {
+        "generation": {
             "type": "string"
         },
         "imageOffer": {
@@ -35,12 +35,14 @@
         "storageAccount": {
             "type": "string"
         },
-        "availabilitySetName": {
-            "type": "string"
-        },
         "sshKey": {
             "type": "string"
         }
+    },
+    "variables": {
+		"NSvImageVersionNumberPrefix": "[if(equals(indexOf('987', '.'), -1), '0.0.', '')]",
+		"NSvImageVersionNumber": "[concat(variables('NSvImageVersionNumberPrefix'), '987')]",
+		"NSvImageVersion": "[if(equals(parameters('generation'), '7'), 'latest', variables('NSvImageVersionNumber'))]"
     },
     "resources": [
     {
@@ -67,7 +69,7 @@
                     "publisher": "[parameters('imagePublisher')]",
                     "offer": "[parameters('imageOffer')]",
                     "sku": "[parameters('imageSku')]",
-                    "version": "[parameters('imageVersion')]"
+                    "version": "[variables('NSvImageVersion')]"
                 },
                 "osDisk": {
                     "caching": "ReadWrite",

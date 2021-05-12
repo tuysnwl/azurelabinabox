@@ -50,7 +50,8 @@
 		"NSvImageVersion": "[if(equals(parameters('NSvVersion'), 'Gen7'), 'latest', variables('NSvImageVersionNumber'))]",
 
 
-		"NSvVmTemplateUrl": "https://catalogartifact.azureedge.net/publicartifacts/sonicwall-inc.sonicwall-nsv-firewall-security-vpn-router-1a995416-a603-4bf8-a52d-4c1914119f19-snwl-nsv-byol-sltn/Artifacts/virtual-machine-password.json",
+		"NSvVmTemplateUrlOld": "https://catalogartifact.azureedge.net/publicartifacts/sonicwall-inc.sonicwall-nsv-firewall-security-vpn-router-1a995416-a603-4bf8-a52d-4c1914119f19-snwl-nsv-byol-sltn/Artifacts/virtual-machine-password.json",
+        "NSvVmTemplateUrl": "https://raw.githubusercontent.com/tuysnwl/azurelabinabox/main/vmTemplates/nsvTemplate.json?token=AT6PGBCHKCTB2U67O46XIRTATPWQK",
 		"variablesEnd": ""
 	},
     "resources": [
