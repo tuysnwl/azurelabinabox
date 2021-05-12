@@ -45,10 +45,8 @@
 		"NSvNetworkInterfaces": "NSvNic",
 		"NSvX1NetworkInterfaces": "NSvNic-X1",
 		"NSvX0NetworkInterfaces": "NSvNic-X0",
-		"NSvImageVersionNumberPrefix": "[if(equals(indexOf('987', '.'), -1), '0.0.', '')]",
-		"NSvImageVersionNumber": "[concat(variables('NSvImageVersionNumberPrefix'), '987')]",
-		"NSvImageVersion": "[if(equals(parameters('NSvVersion'), 'Gen7'), 'latest', variables('NSvImageVersionNumber'))]",
 
+		"NSvImageVersion": "[if(equals(parameters('NSvVersion'), 'Gen7'), '7', '6']",
 
 		"NSvVmTemplateUrlOld": "https://catalogartifact.azureedge.net/publicartifacts/sonicwall-inc.sonicwall-nsv-firewall-security-vpn-router-1a995416-a603-4bf8-a52d-4c1914119f19-snwl-nsv-byol-sltn/Artifacts/virtual-machine-password.json",
         "NSvVmTemplateUrl": "https://raw.githubusercontent.com/tuysnwl/azurelabinabox/main/vmTemplates/nsvTemplate.json?token=AT6PGBCHKCTB2U67O46XIRTATPWQK",
@@ -428,8 +426,8 @@
 				"imagePublisher": {
 					"value": "[variables('NSvImagePublisher')]"
 				},
-                "imageVersion": {
-					"value": "[variables('NSvImageVersion')]"
+                "generation": {
+					"value": "[parameters('NSvVersion')]"
 				},
 				"nicName": {
 					"value": "[variables('NSvNetworkInterfaces')]"
