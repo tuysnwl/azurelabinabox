@@ -444,9 +444,6 @@
 				"storageAccount": {
 					"value": "[variables('storageAccountName')]"
 				},
-				"storageAccountResourceGroupName": {
-					"value": "[variables('resourceGroupName')]"
-				},
 
 				"sshKey": {
 					"value": ""
