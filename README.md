@@ -12,5 +12,5 @@ For production deployments, please visit https://github.com/sonicwall
 ![Alt text](topology.png)
 
 ## Deployment Instructions
-
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ftuysnwl%2Fazurelabinabox%2Fmain%2FmainTemplate.json)
 
