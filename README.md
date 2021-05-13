@@ -1,7 +1,7 @@
 # Azure Lab In A Box
 Author: Timothy Uy
 <br/>
-Last Updated: 05/11/21
+Last Updated: 05/12/21
 
 ## Description
 This project is an easy to deploy SonicWall NSv Azure Lab environment. 
