@@ -13,7 +13,7 @@ For production deployments, please visit https://github.com/sonicwall
 <ol>
   <li>
     <h3>Deploy Template to Azure </h3>
-    <a href=https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ftuysnwl%2Fazurelabinabox%2Fmain%2FmainTemplate.json" target="_blank">
+    <a href=https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ftuysnwl%2Fazurelabinabox%2Fmaster%2FmainTemplate.json" target="_blank">
       <img src="https://aka.ms/deploytoazurebutton"/>
     </a>
     <br/><br/>
