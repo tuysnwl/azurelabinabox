@@ -4,8 +4,8 @@ Author: Timothy Uy
 Last Updated: 05/12/21
 
 ## Description
-This project is an easy to deploy SonicWall NSv Azure Lab environment. 
-<br/><br/>
+This project is an easy to deploy SonicWall NSv Azure Lab environment. The Azure ARM template will create an NSv and Windows VM sitting behind the NSv firewall (along with all of the necessary associated resources).  
+<br/>
 For production deployments, please visit https://github.com/sonicwall
 
 ## Topology
