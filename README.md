@@ -37,7 +37,7 @@ This Resource Group will store all of the resources for this lab environment.
 <br/><br/>
 <li><h3>Log Into the NSv</h3>
   Navigate to your "NSv-VM" from your Resource Group and copy the DNS FQDN.<br/>
-  <img src="instructions/nsvVmFromRG.png.png"/><br/>
+  <img src="instructions/nsvVmFromRG.png"/><br/>
 <img src="instructions/nsvVmFQDN.png"/><br/>
 
   
