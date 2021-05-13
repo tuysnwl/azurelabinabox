@@ -538,7 +538,7 @@
 					    "value": "[resourceGroup().Location]"
 				    },
 				    "vmName": {
-					    "value": "NSv-VM"
+					    "value": "Win-VM"
 				    },
 				    "adminUsername": {
 					    "value": "[parameters('SSHUserName')]"
