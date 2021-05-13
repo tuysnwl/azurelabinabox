@@ -1,6 +1,4 @@
 # Azure Lab In A Box
-Author: Timothy Uy
-<br/>
 Last Updated: 05/12/21
 
 ## Description
