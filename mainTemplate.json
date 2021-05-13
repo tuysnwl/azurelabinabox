@@ -345,7 +345,7 @@
                         "name": "ipconfig2",
                         "properties": {
                             "privateIPAddress": "10.3.2.4",
-                            "privateIPAllocationMethod": "Dynamic",
+                            "privateIPAllocationMethod": "Static",
                             "subnet": {
                                 "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), 'LAN')]"
                             },
@@ -505,7 +505,7 @@
                 {
                 "name": "ipconfig3",
                 "properties": {
-                    "privateIPAllocationMethod": "Dynamic",
+                    "privateIPAllocationMethod": "Static",
                     "privateIPAddress": "10.3.2.5",
                     "publicIPAddress": {
                         "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('WinPublicIP'))]"
