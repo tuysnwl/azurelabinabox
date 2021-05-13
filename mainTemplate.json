@@ -32,7 +32,7 @@
 		}
     },
     "variables": {
-        "CleanLabName": "[toLower(variables('CleanLabName'))]",
+        "CleanLabName": "[toLower(parameters('LabName'))]",
         "resourceGroupName": "[resourceGroup().name]",
 		"vnetName": "[concat(variables('CleanLabName'),'VNET')]",
 		"routeTableName": "[concat(variables('CleanLabName'),'RouteTable')]",
