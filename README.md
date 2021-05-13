@@ -36,10 +36,10 @@ This Resource Group will store all of the resources for this lab environment.
                                                      
 <br/><br/>
 <li><h3>Log Into the NSv</h3>
-  Navigate to your "NSv-VM" from your Resource Group and copy the DNS FQDN.<br/>
-  <img src="instructions/nsvVmFromRG.png"/><br/>
+  Navigate to your "NSv-VM" from your Resource Group and copy the DNS Name.  With DNS Name or Public IP address, log into the NSv VM with another browser window.<br/>
+  <img src="instructions/nsvVmFromRG.png"/><br/><br/>
 <img src="instructions/nsvVmFQDN.png"/><br/>
-
+<br/><br/>
   
 </li>
 </li>
@@ -55,5 +55,9 @@ This Resource Group will store all of the resources for this lab environment.
   <br/>
   For more information, please follow this <a href="https://www.sonicwall.com/support/knowledge-base/how-do-i-configure-nat-policies-on-a-sonicwall-firewall/170505782921100/">KB article</a>
   </li>
+  <li><h3>Remote Desktop to Windows VM</h3>
+  At this point, you will be able to Remote Desktop into your Windows VM with the DNS Name in Step 4.  All traffic from your Windows VM will be passing through the NSv Firewall.<br/>
+<img src="instructions/windowsRemoteDesktopLogin.png"/><br/>
+</li>
 </ol>
 
