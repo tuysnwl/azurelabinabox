@@ -24,7 +24,7 @@ For production deployments, please visit https://github.com/sonicwall
  <h3>Create or Select a Resource Group</h3>
 This Resource Group will store all of the resources for this lab environment.
 <img src="instructions/templateDeploymentRG.png"/>
-<br/><br/>
+<br/>
   </li>
  <li><h3>Populate the fields</h3>
 <img src="instructions/templateDeploymentDetails.png"/><br/>
@@ -32,15 +32,12 @@ This Resource Group will store all of the resources for this lab environment.
                                                      <b>Lab Name</b>: The name of the lab.  This name will be prepended to many of the resources created.  Please use a unique lab name.<br/>
                                                      <b>Management IP</b>: The public IPv4 address that will be used to access the lab environment.  This restricts access to the lab environment to only this public IP address. <br/>
                                                      <b>NSv Version</b>:  Select the NSv version - Generation 6 or Generation 7 for this lab deployment.<br/>
-                                                     <b>SSH Username and Password</b>: This is used for both SSH access for the NSv and RDP access for the Windows VM.                                                    
-                                                     
-<br/><br/>
+                                                     <b>SSH Username and Password</b>: This is used for both SSH access for the NSv and RDP access for the Windows VM.           
+<br/>
 <li><h3>Log Into the NSv</h3>
   Navigate to your "NSv-VM" from your Resource Group and copy the DNS Name.  With DNS Name or Public IP address, log into the NSv VM with another browser window.<br/>
   <img src="instructions/nsvVmFromRG.png"/><br/><br/>
 <img src="instructions/nsvVmFQDN.png"/><br/>
-<br/><br/>
-  
 </li>
 </li>
   <li><h3>Register the NSv</h3>
