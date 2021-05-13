@@ -4,7 +4,10 @@
     "parameters": {
 		"LabName": {
 			"defaultValue": "azurelab",
-			"type": "String"
+			"type": "String",
+			"metadata": {
+				"description": "The Lab Name requires a global Azure Unique name.  It is prepended to resources such as DNS Name and Storage Accounts."
+			}
 		},
 		"ManagementIP": {
 			"type": "String"
@@ -29,10 +32,11 @@
 		}
     },
     "variables": {
-		"resourceGroupName": "[resourceGroup().name]",
-		"vnetName": "[concat(parameters('LabName'),'VNET')]",
-		"routeTableName": "[concat(parameters('LabName'),'RouteTable')]",
-		"storageAccountName": "[concat(parameters('LabName'),'storage')]",
+        "CleanLabName": "[toLower(variables('CleanLabName'))]",
+        "resourceGroupName": "[resourceGroup().name]",
+		"vnetName": "[concat(variables('CleanLabName'),'VNET')]",
+		"routeTableName": "[concat(variables('CleanLabName'),'RouteTable')]",
+		"storageAccountName": "[concat(variables('CleanLabName'),'storage')]",
 
 		"NSvImagePublisher": "sonicwall-inc",
 		"NSvImageOffer": "sonicwall-nsz-azure",
@@ -51,7 +55,7 @@
         "WinPublicIP": "WinPubIP",
         "WinPublicIpSku": "Basic",
         "WinPublicIPAllocationMethod":"Dynamic",
-        "WinDnsLabelPrefix": "[concat(parameters('LabName'),'winvm')]",
+        "WinDnsLabelPrefix": "[concat(variables('CleanLabName'),'winvm')]",
         "WinNetworkInterfaces": "WinNic",
         "WinVmTemplateUrl": "https://raw.githubusercontent.com/tuysnwl/azurelabinabox/main/vmTemplates/windowsTemplate.json",
 		"variablesEnd": ""
@@ -303,7 +307,7 @@
                 "publicIPAllocationMethod": "Dynamic",
                 "idleTimeoutInMinutes": 4,
                 "dnsSettings": {
-                    "domainNameLabel": "[concat(parameters('LabName'),'nsvvm')]"
+                    "domainNameLabel": "[concat(variables('CleanLabName'),'nsvvm')]"
                 },
                 "ipTags": []
             }
