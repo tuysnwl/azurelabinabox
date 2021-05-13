@@ -58,6 +58,19 @@
 	},
     "resources": [
         {
+            "apiVersion": "2018-02-01",
+            "name": "pid-b2c3737d-57f9-526e-953d-ebcc448a3a6a",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+              "mode": "Incremental",
+              "template": {
+                "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                "contentVersion": "1.0.0.0",
+                "resources": []
+              }
+            }
+        },
+        {
             "type": "Microsoft.Network/networkSecurityGroups",
             "apiVersion": "2020-11-01",
             "name": "[variables('NSvNetworkSecurityGroups')]",
